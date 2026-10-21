@@ -34,7 +34,7 @@ decimation attributes and `SmApiEvaluateSurface*`); `geom.a_object` and
 - **Merge-curves world:** `topology::brep::p2::merge_curves_on_surface` reads its B-rep
   through the world (`MergeCurvesObjects::brep`); `topology.brep_p10` and `blend.hcr` use
   `topology::face::p2::FaceClassifyObjects` over the B-rep and the curves. The next
-  blocker is `intersect.curve_class_p2` (the classification constructor's `ReSet`).
+  blocker is the face's point classification (`SmFace::PointClassify`, `query.face_p2`).
 - **Open follow-up** (no PR yet): `geom.object`'s `Shape` cannot reach the B-rep box
   without a store.
 

@@ -2455,14 +2455,18 @@ mod tests {
         let short = [line(a, Point3::new(0.25 + 1e-9, 0.5, 0.0))];
         let merged = merge_curves_on_surface(&mut k, &mut b, face, 1e-6, &short, &[], false);
         assert_eq!(merged.unwrap(), (vec![], vec![]));
-        // a longer one reaches the classification against the face, whose constructor's
-        // ReSet (intersect.curve_class_p2) is the next unported step
+        // a longer one is classified against the face through the B-rep's world, up to
+        // the face's point classification (SmFace::PointClassify, query.face_p2), the
+        // next unported step
         let long = [line(a, Point3::new(0.75, 0.5, 0.0))];
         let uv = [line(a, Point3::new(0.75, 0.5, 0.0))];
-        match merge_curves_on_surface(&mut k, &mut b, face, 1e-6, &long, &uv, false) {
-            Err(SolidError::Unported { unit, .. }) => assert_eq!(unit, "intersect.curve_class_p2"),
-            other => panic!("unexpected {other:?}"),
-        }
+        assert!(matches!(
+            merge_curves_on_surface(&mut k, &mut b, face, 1e-6, &long, &uv, false),
+            Err(SolidError::Unported {
+                upstream: "SmFace::PointClassify",
+                unit: "query.face_p2",
+            })
+        ));
         assert!(!k.context.doing_boolean());
     }
 
